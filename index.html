@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>ألفية ابن مالك | تحدي الأبيات الأولى</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
+    body { font-family: 'Cairo', sans-serif; background: linear-gradient(135deg, #0f2e1a 0%, #1a472a 40%, #0d2818 100%); min-height: 100dvh; overflow-x: hidden; }
+    .verse-font { font-family: 'Amiri', serif; }
+    .card-glow { box-shadow: 0 0 40px rgba(212, 175, 55, 0.15), 0 10px 40px rgba(0,0,0,0.4); }
+    .gold-border { border: 2px solid #d4af37; }
+    .btn-press:active { transform: scale(0.96); }
+    .option-btn { transition: all 0.25s ease; }
+    .option-btn:hover:not(:disabled) { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(212,175,55,0.3); }
+    .option-correct { background: linear-gradient(135deg, #166534, #15803d) !important; border-color: #4ade80 !important; color: #fff !important; }
+    .option-wrong { background: linear-gradient(135deg, #7f1d1d, #991b1b) !important; border-color: #f87171 !important; color: #fff !important; }
+    .pulse-gold { animation: pulseGold 2s infinite; }
+    @keyframes pulseGold {
+      0%, 100% { box-shadow: 0 0 20px rgba(212,175,55,0.4); }
+      50% { box-shadow: 0 0 40px rgba(212,175,55,0.8); }
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-8px); }
+      40%, 80% { transform: translateX(8px); }
+    }
+    @keyframes confettiFall {
+      0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+    }
+    .fade-in-up { animation: fadeInUp 0.5s ease forwards; }
+    .shake { animation: shake 0.5s ease; }
+    .progress-bar { transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+    .screen { display: none; }
+    .screen.active { display: flex; }
+    .floating { animation: float 3s ease-in-out infinite; }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-12px); }
+    }
+    .ornament::before, .ornament::after {
+      content: "❖";
+      color: #d4af37;
+      margin: 0 12px;
+      font-size: 1.1em;
+    }
+    #confetti-container { pointer-events: none; position: fixed; inset: 0; overflow: hidden; z-index: 100; }
+    .heart-lost { animation: shake 0.4s ease; filter: grayscale(1); opacity: 0.4; }
+  </style>
+</head>
+<body class="text-white">
+  <div id="confetti-container"></div>
+
+  <!-- START SCREEN -->
+  <div id="start-screen" class="screen active min-h-dvh flex-col items-center justify-center p-4 relative">
+    <div class="absolute inset-0 opacity-10 pointer-events-none" style="background-image: url('data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"60\" height=\"60\" viewBox=\"0 0 60 60\"><text x=\"10\" y=\"40\" font-size=\"30\" fill=\"%23d4af37\">✦</text></svg>');"></div>
+    
+    <div class="max-w-lg w-full text-center fade-in-up">
+      <div class="floating mb-6">
+        <div class="w-24 h-24 mx-auto rounded-full gold-border bg-gradient-to-br from-amber-700/40 to-yellow-900/40 flex items-center justify-center card-glow">
+          <span class="text-5xl">📜</span>
+        </div>
+      </div>
+      
+      <h1 class="text-3xl md:text-4xl font-extrabold mb-2 text-amber-300 ornament">ألفية ابن مالك</h1>
+      <p class="text-amber-100/80 text-lg mb-1 verse-font">تحدي الأبيات الأولى</p>
+      <p class="text-emerald-200/60 text-sm mb-8 leading-relaxed px-4">
+        من قوله: «كلامنا لفظ مفيد كاستقم»<br>
+        إلى: «نحو صه وحيهل»
+      </p>
+
+      <div class="bg-emerald-950/60 backdrop-blur rounded-2xl p-5 mb-8 gold-border card-glow text-right">
+        <h3 class="text-amber-300 font-bold mb-3 flex items-center gap-2">
+          <span>🎯</span> كيف تلعب؟
+        </h3>
+        <ul class="text-sm text-emerald-100/90 space-y-2 leading-relaxed">
+          <li>• أجب عن أسئلة في حفظ الأبيات وفهم معانيها</li>
+          <li>• عند الخطأ تظهر لك الإجابة الصحيحة مع التعليل النحوي</li>
+          <li>• لديك 3 محاولات (قلوب) — لا تُضِعها!</li>
+          <li>• اجمع أعلى درجة وأصبح حارس الألفية</li>
+        </ul>
+      </div>
+
+      <button id="btn-start" class="btn-press w-full py-4 rounded-2xl bg-gradient-to-l from-amber-600 to-yellow-600 text-emerald-950 font-extrabold text-xl shadow-lg hover:from-amber-500 hover:to-yellow-500 transition pulse-gold mb-3">
+        ابدأ التحدي 🚀
+      </button>
+      <button id="btn-show-verses" class="btn-press w-full py-3 rounded-2xl border-2 border-amber-600/50 text-amber-200 font-bold hover:bg-amber-900/30 transition">
+        📖 عرض الأبيات كاملة
+      </button>
+    </div>
+  </div>
+
+  <!-- VERSES MODAL -->
+  <div id="verses-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
+    <div class="bg-emerald-950 gold-border rounded-3xl max-w-lg w-full max-h-[85dvh] overflow-y-auto card-glow p-6 relative">
+      <button id="close-verses" class="absolute top-4 left-4 w-10 h-10 rounded-full bg-red-900/50 text-red-200 flex items-center justify-center text-xl hover:bg-red-800">×</button>
+      <h2 class="text-2xl font-bold text-amber-300 text-center mb-6 ornament">الأبيات الأولى</h2>
+      <div class="verse-font text-lg leading-loose text-amber-50 space-y-4 text-center" id="full-verses-text"></div>
+    </div>
+  </div>
+
+  <!-- GAME SCREEN -->
+  <div id="game-screen" class="screen min-h-dvh flex-col p-3 md:p-6">
+    <!-- Top bar -->
+    <div class="max-w-2xl mx-auto w-full flex items-center justify-between mb-4 gap-2">
+      <div class="flex items-center gap-1" id="hearts-container">
+        <span class="heart text-2xl" data-i="0">❤️</span>
+        <span class="heart text-2xl" data-i="1">❤️</span>
+        <span class="heart text-2xl" data-i="2">❤️</span>
+      </div>
+      <div class="flex-1 mx-3">
+        <div class="h-3 bg-emerald-950 rounded-full overflow-hidden border border-emerald-700">
+          <div id="progress-bar" class="progress-bar h-full bg-gradient-to-l from-amber-500 to-yellow-400 rounded-full" style="width:0%"></div>
+        </div>
+        <p class="text-center text-xs text-emerald-300/70 mt-1"><span id="q-num">1</span> / <span id="q-total">10</span></p>
+      </div>
+      <div class="bg-amber-900/40 gold-border rounded-xl px-3 py-1 text-center min-w-[70px]">
+        <p class="text-[10px] text-amber-200/70">النقاط</p>
+        <p id="score-display" class="font-extrabold text-amber-300 text-lg">0</p>
+      </div>
+    </div>
+
+    <!-- Question card -->
+    <div class="flex-1 flex items-center justify-center">
+      <div class="max-w-2xl w-full">
+        <div id="question-card" class="bg-emerald-950/80 backdrop-blur rounded-3xl p-5 md:p-8 gold-border card-glow fade-in-up">
+          <div class="flex items-center gap-2 mb-4">
+            <span id="q-badge" class="bg-amber-600 text-emerald-950 text-xs font-bold px-3 py-1 rounded-full">حفظ</span>
+            <span id="q-category" class="text-emerald-400/80 text-sm">الأبيات</span>
+          </div>
+          <p id="question-text" class="text-xl md:text-2xl font-bold text-amber-50 leading-relaxed mb-6 verse-font text-center"></p>
+          
+          <div id="options-container" class="grid gap-3"></div>
+        </div>
+
+        <!-- Feedback panel -->
+        <div id="feedback-panel" class="hidden mt-4 bg-emerald-900/90 rounded-2xl p-5 gold-border fade-in-up">
+          <div id="feedback-icon" class="text-4xl text-center mb-2"></div>
+          <p id="feedback-title" class="text-center font-bold text-xl mb-3"></p>
+          <div id="feedback-explanation" class="bg-black/30 rounded-xl p-4 text-sm leading-relaxed text-emerald-100"></div>
+          <button id="btn-next" class="btn-press w-full mt-4 py-3 rounded-xl bg-gradient-to-l from-amber-600 to-yellow-600 text-emerald-950 font-bold text-lg">
+            السؤال التالي ←
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GAME OVER SCREEN -->
+  <div id="gameover-screen" class="screen min-h-dvh flex-col items-center justify-center p-4">
+    <div class="max-w-md w-full text-center fade-in-up">
+      <div id="result-emoji" class="text-7xl mb-4 floating">🏆</div>
+      <h2 id="result-title" class="text-3xl font-extrabold text-amber-300 mb-2">أحسنت!</h2>
+      <p id="result-message" class="text-emerald-200/80 mb-6"></p>
+      
+      <div class="bg-emerald-950/70 gold-border rounded-2xl p-6 mb-6 card-glow">
+        <p class="text-sm text-amber-200/60 mb-1">درجتك النهائية</p>
+        <p id="final-score" class="text-5xl font-extrabold text-amber-300 mb-2">0</p>
+        <p id="final-detail" class="text-emerald-300/70 text-sm"></p>
+        <div class="mt-4 h-4 bg-emerald-900 rounded-full overflow-hidden">
+          <div id="final-bar" class="h-full bg-gradient-to-l from-amber-500 to-yellow-400 rounded-full progress-bar" style="width:0%"></div>
+        </div>
+      </div>
+
+      <button id="btn-restart" class="btn-press w-full py-4 rounded-2xl bg-gradient-to-l from-amber-600 to-yellow-600 text-emerald-950 font-extrabold text-xl mb-3 shadow-lg">
+        العب مرة أخرى 🔄
+      </button>
+      <button id="btn-home" class="btn-press w-full py-3 rounded-2xl border-2 border-amber-600/50 text-amber-200 font-bold hover:bg-amber-900/30 transition">
+        العودة للرئيسية
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // ========== AUDIO ==========
+    let audioCtx = null;
+    function ensureAudio() {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    function playTone(freq, dur, type = 'sine', vol = 0.25) {
+      try {
+        ensureAudio();
+        const o = audioCtx.createOscillator();
+        const g = audioCtx.createGain();
+        o.connect(g); g.connect(audioCtx.destination);
+        o.frequency.value = freq; o.type = type;
+        g.gain.setValueAtTime(vol, audioCtx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+        o.start(); o.stop(audioCtx.currentTime + dur);
+      } catch(e) {}
+    }
+    function playCorrect() {
+      playTone(523.25, 0.12, 'sine', 0.3);
+      setTimeout(() => playTone(659.25, 0.12, 'sine', 0.3), 100);
+      setTimeout(() => playTone(783.99, 0.2, 'sine', 0.25), 200);
+    }
+    function playWrong() {
+      playTone(180, 0.3, 'sawtooth', 0.15);
+      setTimeout(() => playTone(140, 0.4, 'sawtooth', 0.12), 150);
+    }
+    function playClick() { playTone(600, 0.05, 'square', 0.08); }
+    function playWin() {
+      [523,659,784,1047].forEach((f,i) => setTimeout(() => playTone(f, 0.2, 'sine', 0.25), i*120));
+    }
+    function playLose() {
+      [400,350,300,250].forEach((f,i) => setTimeout(() => playTone(f, 0.25, 'triangle', 0.15), i*150));
+    }
+
+    // ========== VERSES DATA ==========
+    const FULL_VERSES = [
+      "كَلَامُنَا لَفْظٌ مُفِيدٌ كَاسْتَقِمْ",
+      "وَاسْمٌ وَفِعْلٌ ثُمَّ حَرْفٌ الْكَلِمْ",
+      "وَاحِدُهُ كَلِمَةٌ وَالْقَوْلُ عَمّ",
+      "وَكِلْمَةٌ بِهَا كَلَامٌ قَدْ يُؤَمّ",
+      "بِالْجَرِّ وَالتَّنْوِينِ وَالنِّدَا وَأَلْ",
+      "وَمُسْنَدٍ لِلِاسْمِ تَمْيِيزٌ حَصَلْ",
+      "بِتَا فَعَلْتَ وَأَتَتْ وَيَا افْعَلِي",
+      "وَنُونِ أَقْبِلَنَّ فِعْلٌ يَنْجَلِي",
+      "وَسِوَاهُمَا الْحَرْفُ كَهَلْ وَفِي وَلَمْ",
+      "فِعْلٌ مُضَارِعٌ يَلِي لَمْ كَيَشَمْ",
+      "وَمَاضِيَ الْأَفْعَالِ بِالتَّا مِزْ وَسِمْ",
+      "بِالنُّونِ فِعْلَ الْأَمْرِ إِنْ أَمْرٌ فُهِمْ",
+      "وَالْأَمْرُ إِنْ لَمْ يَكُ لِلنُّونِ مَحَلّ",
+      "فِيهِ هُوَ اسْمٌ نَحْوُ صَهْ وَحَيَّهَلْ"
+    ];
+
+    // ========== QUESTIONS ==========
+    const QUESTIONS = [
+      {
+        category: "حفظ الأبيات",
+        badge: "حفظ",
+        q: "أكمل البيت:\n«كلامُنا لفظٌ مفيدٌ كـ........»",
+        options: ["استقم", "اكتبْ", "اجلسْ", "اقرأْ"],
+        correct: 0,
+        explanation: "البيت كاملاً: «كلامُنا لفظٌ مفيدٌ كاستقم». مثَّل ابن مالك للكلام المفيد بفعل الأمر «استقم» لأنه جملة فعلية تامة تفيد فائدة يحسن السكوت عليها. الكلام عند النحاة: اللفظ المركب المفيد بالوضع."
+      },
+      {
+        category: "أقسام الكلم",
+        badge: "فهم",
+        q: "ما هي أقسام الكلم كما ذكر ابن مالك؟",
+        options: ["اسم وفعل وحرف", "اسم وصفة وفعل", "فعل وحرف وجملة", "اسم وفعل ومصدر"],
+        correct: 0,
+        explanation: "قال ابن مالك: «واسمٌ وفعلٌ ثم حرفٌ الكلم». الكلم اسم جنس جمعي واحده كلمة، وينقسم إلى ثلاثة أقسام لا رابع لها: الاسم والفعل والحرف. وهذا إجماع النحاة."
+      },
+      {
+        category: "حفظ الأبيات",
+        badge: "حفظ",
+        q: "أكمل: «واحدُه كلمةٌ والقولُ ......»",
+        options: ["عمّ", "تمّ", "ثمّ", "كمّ"],
+        correct: 0,
+        explanation: "البيت: «واحدُه كلمةٌ والقولُ عمّ». معنى «عمّ» أي أن القول أعم من الكلام والكلم والكلمة، فيشمل المفيد وغيره، والمركب والمفرد. فالقول يُطلق على كل ملفوظ."
+      },
+      {
+        category: "علامات الاسم",
+        badge: "فهم",
+        q: "بأيِّ العلامات يتميز الاسم عن غيره؟",
+        options: [
+          "الجرّ والتنوين والنداء وأل والإسناد إليه",
+          "التاء المتحركة ونون التوكيد فقط",
+          "دخول هل ولم وفي",
+          "الرفع والنصب والجزم"
+        ],
+        correct: 0,
+        explanation: "قال الناظم: «بالجرِّ والتنوينِ والندا وألْ / ومسندٍ للاسمِ تمييزٌ حصلْ». فهذه خمس علامات للاسم: 1) الجر (بالحرف أو الإضافة أو التبعية) 2) التنوين 3) النداء 4) دخول أل 5) الإسناد إليه (أن يكون مبتدأ أو فاعلاً)."
+      },
+      {
+        category: "علامات الفعل",
+        badge: "فهم",
+        q: "ما العلامات التي يُعرف بها الفعل؟",
+        options: [
+          "تاء فعلتَ، وتاء أتتْ، وياء افعلي، ونون أقبلنَّ",
+          "الجر والتنوين وأل",
+          "هل وفي ولم فقط",
+          "الضمة والفتحة والكسرة"
+        ],
+        correct: 0,
+        explanation: "قال: «بتا فعلتَ وأتتْ ويا افعلي / ونونِ أقبلنَّ فعلٌ ينجلي». أربع علامات: 1) تاء الفاعل (فعلتُ/تَ/تِ) 2) تاء التأنيث الساكنة (أتتْ) 3) ياء المخاطبة (افعلي) 4) نون التوكيد (أقبلنَّ). متى دخلت واحدة منها على كلمة فهي فعل."
+      },
+      {
+        category: "الحرف",
+        badge: "حفظ",
+        q: "أكمل: «وسواهما الحرفُ كـ..... و..... و......»",
+        options: ["هل وفي ولم", "من وإلى وعلى", "إن وأن ولكن", "في وعلى ولم"],
+        correct: 0,
+        explanation: "البيت: «وسواهما الحرفُ كهلْ وفي ولمْ». بعد أن ذكر علامات الاسم والفعل قال إن ما سواهما فهو حرف، ومثَّل بـ: هل (حرف استفهام)، وفي (حرف جر)، ولم (حرف جزم ونفي وقلب). والحرف لا يقبل علامات الاسم ولا الفعل."
+      },
+      {
+        category: "الفعل المضارع",
+        badge: "فهم",
+        q: "أيُّ الأفعال يلي حرفَ «لمْ»؟ وما مثاله في الألفية؟",
+        options: [
+          "المضارع، ومثاله: يَشَمْ",
+          "الماضي، ومثاله: شمَّ",
+          "الأمر، ومثاله: شُمَّ",
+          "اسم الفعل، ومثاله: صه"
+        ],
+        correct: 0,
+        explanation: "قال: «فعلٌ مضارعٌ يلي لمْ كيشمْ». «لم» حرف نفي وجزم وقلب، تختص بالدخول على المضارع فتجزمه وتقلبه ماضياً في المعنى. مثاله: لم يَشَمْ (من شامَ يشيمُ إذا نظر إلى البرق)."
+      },
+      {
+        category: "فعل الأمر",
+        badge: "فهم",
+        q: "كيف نميز فعل الأمر كما قال ابن مالك؟",
+        options: [
+          "بقبول نون التوكيد مع دلالته على الأمر",
+          "بدخول أل عليه",
+          "بالجر والتنوين",
+          "بدخول لم عليه"
+        ],
+        correct: 0,
+        explanation: "قال: «بالنُّونِ فعلَ الأمرِ إنْ أمرٌ فُهِمْ». أي أن ما دل على الأمر وقبل نون التوكيد فهو فعل أمر حقيقي، مثل: اضربنَّ، اكتبنَّ. فالنون دليل فعليته."
+      },
+      {
+        category: "اسم الفعل",
+        badge: "فهم",
+        q: "«صهْ» و«حيَّهلْ» ما نوعهما؟ ولماذا؟",
+        options: [
+          "اسما فعل؛ لأنهما يدلان على الأمر ولا يقبلان نون التوكيد",
+          "فعلا أمر حقيقيين",
+          "حرفين من حروف المعاني",
+          "اسمين معربين"
+        ],
+        correct: 0,
+        explanation: "قال: «والأمرُ إن لم يكُ للنونِ محلّ / فيه هو اسمٌ نحوُ صهْ وحيَّهلْ». إذا دلت الكلمة على الأمر ولم تقبل نون التوكيد فهي اسم فعل، وليست فعلاً. صهْ = اسكتْ، وحيَّهلْ = أقبلْ/هلمَّ. لا نقول: صهنَّ ولا حيَّهلنَّ."
+      },
+      {
+        category: "حفظ الأبيات",
+        badge: "حفظ",
+        q: "أكمل البيت الأخير:\n«والأمرُ إن لم يكُ للنونِ محلّ / فيه هو اسمٌ نحوُ ...... و......»",
+        options: ["صهْ وحيَّهلْ", "هلْ ولمْ", "في وعلى", "قدْ وبلْ"],
+        correct: 0,
+        explanation: "تمام البيت: «فيه هو اسمٌ نحوُ صهْ وحيَّهلْ». هذان مثالان لاسمي الفعل اللذين يدلان على الأمر ولا محل فيهما لنون التوكيد، بخلاف فعل الأمر الحقيقي."
+      },
+      {
+        category: "التمييز الدقيق",
+        badge: "تحليل",
+        q: "لماذا كانت «استقم» كلاماً ولم تكن مجرد كلمة؟",
+        options: [
+          "لأنها لفظ مفيد يحسن السكوت عليه (جملة تامة)",
+          "لأنها فعل ماضٍ",
+          "لأنها اسم ظاهر",
+          "لأنها حرف معنى"
+        ],
+        correct: 0,
+        explanation: "الكلام شرطه الإفادة التامة. «استقم» فعل أمر والفاعل مستتر وجوباً (أنت)، فهي جملة فعلية مستقلة المعنى، يحسن السكوت عليها. أما الكلمة الواحدة غير المفيدة فلا تُسمَّى كلاماً عند النحاة."
+      },
+      {
+        category: "القول والكلم",
+        badge: "فهم",
+        q: "ما الفرق بين «الكلم» و«القول» في نظم ابن مالك؟",
+        options: [
+          "الكلم: اسم+فعل+حرف (ما تركب من ثلاث)، والقول أعم يشمل كل ملفوظ",
+          "هما مترادفان تماماً",
+          "القول خاص بالمفيد والكلم عام",
+          "الكلم هو الجملة والقول هو المفرد"
+        ],
+        correct: 0,
+        explanation: "«الكلم» اسم جنس جمعي يصدق على ما تركب من ثلاث كلمات فأكثر (اسم وفعل وحرف). أما «القول» فهو أعم شيء: يطلق على المفيد وغيره، والمركب والمفرد، والكلمة والكلام. لذلك قال «والقولُ عمّ»."
+      }
+    ];
+
+    // ========== GAME STATE ==========
+    let state = {
+      questions: [],
+      current: 0,
+      score: 0,
+      lives: 3,
+      answered: false,
+      correctCount: 0
+    };
+
+    // ========== DOM ==========
+    const $ = (sel) => document.querySelector(sel);
+    const screens = {
+      start: $('#start-screen'),
+      game: $('#game-screen'),
+      over: $('#gameover-screen')
+    };
+
+    function showScreen(name) {
+      Object.values(screens).forEach(s => s.classList.remove('active'));
+      screens[name].classList.add('active');
+    }
+
+    // ========== VERSES MODAL ==========
+    $('#full-verses-text').innerHTML = FULL_VERSES.map((v, i) => {
+      if (i % 2 === 0) return `<p class="text-amber-100">${v}</p>`;
+      return `<p class="text-amber-200/90 mb-3">${v}</p>`;
+    }).join('');
+
+    $('#btn-show-verses').onclick = () => {
+      playClick();
+      $('#verses-modal').classList.remove('hidden');
+      $('#verses-modal').classList.add('flex');
+    };
+    $('#close-verses').onclick = () => {
+      playClick();
+      $('#verses-modal').classList.add('hidden');
+      $('#verses-modal').classList.remove('flex');
+    };
+    $('#verses-modal').onclick = (e) => {
+      if (e.target === $('#verses-modal')) {
+        $('#verses-modal').classList.add('hidden');
+        $('#verses-modal').classList.remove('flex');
+      }
+    };
+
+    // ========== SHUFFLE ==========
+    function shuffle(arr) {
+      const a = [...arr];
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    // ========== START GAME ==========
+    function startGame() {
+      ensureAudio();
+      playClick();
+      state.questions = shuffle(QUESTIONS).slice(0, 10);
+      // keep original correct index after potential option shuffle
+      state.questions = state.questions.map(q => {
+        const opts = q.options.map((o, i) => ({ text: o, orig: i }));
+        const shuffled = shuffle(opts);
+        const newCorrect = shuffled.findIndex(o => o.orig === q.correct);
+        return {
+          ...q,
+          options: shuffled.map(o => o.text),
+          correct: newCorrect
+        };
+      });
+      state.current = 0;
+      state.score = 0;
+      state.lives = 3;
+      state.correctCount = 0;
+      state.answered = false;
+      updateHearts();
+      $('#score-display').textContent = '0';
+      $('#q-total').textContent = state.questions.length;
+      showScreen('game');
+      renderQuestion();
+    }
+
+    $('#btn-start').onclick = startGame;
+    $('#btn-restart').onclick = startGame;
+    $('#btn-home').onclick = () => { playClick(); showScreen('start'); };
+
+    // ========== HEARTS ==========
+    function updateHearts() {
+      document.querySelectorAll('.heart').forEach((h, i) => {
+        if (i < state.lives) {
+          h.textContent = '❤️';
+          h.classList.remove('heart-lost');
+        } else {
+          h.textContent = '🖤';
+          h.classList.add('heart-lost');
+        }
+      });
+    }
+
+    // ========== RENDER QUESTION ==========
+    function renderQuestion() {
+      state.answered = false;
+      const q = state.questions[state.current];
+      const card = $('#question-card');
+      card.classList.remove('fade-in-up');
+      void card.offsetWidth;
+      card.classList.add('fade-in-up');
+
+      $('#q-num').textContent = state.current + 1;
+      $('#progress-bar').style.width = ((state.current) / state.questions.length * 100) + '%';
+      $('#q-badge').textContent = q.badge;
+      $('#q-category').textContent = q.category;
+      $('#question-text').innerHTML = q.q.replace(/\n/g, '<br>');
+      
+      $('#feedback-panel').classList.add('hidden');
+      $('#question-card').classList.remove('hidden');
+
+      const container = $('#options-container');
+      container.innerHTML = '';
+      q.options.forEach((opt, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn btn-press w-full py-4 px-5 rounded-xl bg-emerald-900/80 border-2 border-emerald-600/50 text-amber-50 font-semibold text-right hover:border-amber-500 text-base md:text-lg leading-relaxed';
+        btn.innerHTML = `<span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-amber-700/40 text-amber-300 text-sm font-bold ml-3">${['أ','ب','ج','د'][i]}</span>${opt}`;
+        btn.onclick = () => selectAnswer(i);
+        container.appendChild(btn);
+      });
+    }
+
+    // ========== SELECT ANSWER ==========
+    function selectAnswer(idx) {
+      if (state.answered) return;
+      state.answered = true;
+      const q = state.questions[state.current];
+      const buttons = $('#options-container').querySelectorAll('button');
+      buttons.forEach(b => b.disabled = true);
+
+      const isCorrect = idx === q.correct;
+
+      buttons[q.correct].classList.add('option-correct');
+      if (!isCorrect) {
+        buttons[idx].classList.add('option-wrong');
+        buttons[idx].classList.add('shake');
+      }
+
+      if (isCorrect) {
+        playCorrect();
+        state.score += 10;
+        state.correctCount++;
+        $('#score-display').textContent = state.score;
+        $('#feedback-icon').textContent = '✅';
+        $('#feedback-title').textContent = 'إجابة صحيحة! أحسنت';
+        $('#feedback-title').className = 'text-center font-bold text-xl mb-3 text-green-400';
+      } else {
+        playWrong();
+        state.lives--;
+        updateHearts();
+        $('#feedback-icon').textContent = '❌';
+        $('#feedback-title').textContent = 'إجابة خاطئة';
+        $('#feedback-title').className = 'text-center font-bold text-xl mb-3 text-red-400';
+      }
+
+      $('#feedback-explanation').innerHTML = `
+        <p class="text-amber-300 font-bold mb-2">📘 التعليل والتصحيح:</p>
+        <p class="mb-2"><span class="text-green-400">✓ الصواب:</span> ${q.options[q.correct]}</p>
+        <p class="text-emerald-100/90 leading-7">${q.explanation}</p>
+      `;
+
+      $('#feedback-panel').classList.remove('hidden');
+      
+      // scroll feedback into view on mobile
+      setTimeout(() => {
+        $('#feedback-panel').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }, 300);
+
+      if (state.lives <= 0) {
+        $('#btn-next').textContent = 'عرض النتيجة 🏁';
+        $('#btn-next').onclick = endGame;
+      } else if (state.current >= state.questions.length - 1) {
+        $('#btn-next').textContent = 'عرض النتيجة 🏁';
+        $('#btn-next').onclick = endGame;
+      } else {
+        $('#btn-next').textContent = 'السؤال التالي ←';
+        $('#btn-next').onclick = () => {
+          playClick();
+          state.current++;
+          renderQuestion();
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+      }
+    }
+
+    // ========== END GAME ==========
+    function endGame() {
+      playClick();
+      $('#progress-bar').style.width = '100%';
+      const total = state.questions.length;
+      const pct = Math.round((state.correctCount / total) * 100);
+      const maxScore = total * 10;
+      
+      let title, msg, emoji;
+      if (pct >= 90) {
+        emoji = '🏆'; title = 'حارس الألفية!'; msg = 'ممتاز جداً! أتقنتَ الأبيات الأولى من ألفية ابن مالك. بارك الله فيك.';
+        playWin(); launchConfetti();
+      } else if (pct >= 70) {
+        emoji = '⭐'; title = 'أداء رائع!'; msg = 'مستوى جيد جداً. راجع التعليلات التي أخطأت فيها لتتقن أكثر.';
+        playWin();
+      } else if (pct >= 50) {
+        emoji = '📖'; title = 'جيد، واصل!'; msg = 'أنت على الطريق الصحيح. أعد المحاولة بعد مراجعة الأبيات.';
+        playCorrect();
+      } else {
+        emoji = '💪'; title = 'حاول مجدداً'; msg = 'لا بأس، النحو يحتاج صبراً. اقرأ الأبيات ثم أعد التحدي!';
+        playLose();
+      }
+
+      $('#result-emoji').textContent = emoji;
+      $('#result-title').textContent = title;
+      $('#result-message').textContent = msg;
+      $('#final-score').textContent = state.score;
+      $('#final-detail').textContent = `${state.correctCount} من ${total} إجابات صحيحة (${pct}%) — أعلى درجة: ${maxScore}`;
+      $('#final-bar').style.width = pct + '%';
+      
+      showScreen('over');
+    }
+
+    // ========== CONFETTI ==========
+    function launchConfetti() {
+      const container = $('#confetti-container');
+      const colors = ['#d4af37', '#fbbf24', '#34d399', '#f472b6', '#60a5fa', '#a78bfa'];
+      for (let i = 0; i < 60; i++) {
+        const el = document.createElement('div');
+        el.style.cssText = `
+          position:absolute; width:${6+Math.random()*10}px; height:${6+Math.random()*10}px;
+          background:${colors[i%colors.length]}; left:${Math.random()*100}%;
+          top:-20px; border-radius:${Math.random()>0.5?'50%':'2px'};
+          animation: confettiFall ${2+Math.random()*3}s linear forwards;
+          animation-delay:${Math.random()*0.8}s;
+        `;
+        container.appendChild(el);
+        setTimeout(() => el.remove(), 5000);
+      }
+    }
+
+    // Init
+    showScreen('start');
+  </script>
+</body>
+</html>
